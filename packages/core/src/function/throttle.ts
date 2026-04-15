@@ -3,15 +3,11 @@ type ThrottleBehavior = {
   trailing?: boolean
 }
 
-type ThrottleOptions = [
-  fn: (...args: unknown[]) => void,
-  wait: number,
-  behavior?: ThrottleBehavior,
-]
+type ThrottleOptions = [fn: (...args: unknown[]) => void, wait: number, behavior?: ThrottleBehavior]
 
 export default function throttle(...args: ThrottleOptions) {
   const [fn, wait, behavior = {}] = args
-  const { leading = true, trailing = true } = behavior
+  const {leading = true, trailing = true} = behavior
 
   let timer: ReturnType<typeof setTimeout> | undefined
   let lastInvokeTime: number | undefined
@@ -20,9 +16,9 @@ export default function throttle(...args: ThrottleOptions) {
 
   return function (this: unknown, ...args: unknown[]) {
     const now = Date.now()
-    const sinceLastInvoke =
-      lastInvokeTime === undefined ? Number.NaN : now - lastInvokeTime
+    const sinceLastInvoke = lastInvokeTime === undefined ? Number.NaN : now - lastInvokeTime
 
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     lastThis = this
     lastArgs = args
 

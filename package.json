@@ -1,16 +1,38 @@
 {
   "name": "core",
   "version": "1.0.0",
-  "description": "",
+  "description": "core tools",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
+    "lint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
+    "format": "prettier --write \"packages/**/*.{js,ts,jsx,tsx,json,css}\"",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "lint-staged": {
+    "*.{js,jsx,cjs,mjs,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "**/*.{json,css}": [
+      "prettier --write"
+    ]
+  },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
+    "@ianchoi/eslint-config-standard": "^0.0.2",
+    "@ianchoi/eslint-config-typescript": "^0.0.2",
+    "@ianchoi/prettier-config-standard": "^0.0.1",
     "eslint": "^10.2.0",
+    "husky": "^9.1.7",
+    "jiti": "^2.6.1",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
     "tsup": "^8.5.1",
     "typescript": "^6.0.2",
