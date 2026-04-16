@@ -1,0 +1,6 @@
+packages:
+  - packages/*
+
+catalog:
+  vitest: ^4.1.4
+  tsup: ^8.5.1

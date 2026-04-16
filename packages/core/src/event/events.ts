@@ -59,7 +59,7 @@ export default class EventsEmitter {
   once(eventName: string, callback: EventHandler): this {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this
-    const wrapperFn: StoredHandler = function (...args: unknown[]) {
+    const wrapperFn: StoredHandler = function (this: unknown, ...args: unknown[]) {
       self.off(eventName, callback)
       callback.apply(this, args)
     }

@@ -9,7 +9,7 @@ export default function debounce(...args: DebounceOptions) {
 
   let timer: ReturnType<typeof setTimeout> | undefined
 
-  return function (...args) {
+  return function (this: unknown, ...args: unknown[]) {
     const callNow = immediate && !timer
 
     clearTimeout(timer)

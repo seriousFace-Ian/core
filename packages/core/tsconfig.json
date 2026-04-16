@@ -1,6 +1,24 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
+    /* Basic config */
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["esnext", "dom"],
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": false,
+
+    /* compile rules */
+    "strict": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "ignoreDeprecations": "6.0",
+
+    /* output config */
     "rootDir": "./src"
   },
   "include": ["src/**/*.ts"]

@@ -6,7 +6,13 @@ export default defineConfig([
   ...eslintConfigStandard,
   ...eslintConfigTypescript,
   {
-    files: ['**/eslint.config.ts', '**/eslint.config.tsx'],
+    files: [
+      '**/eslint.config.ts',
+      '**/eslint.config.tsx',
+      '**/tsup.config.ts',
+      '**/vitest.config.ts',
+      '**/*.test.ts',
+    ],
     rules: {
       'import-x/no-extraneous-dependencies': [
         'error',

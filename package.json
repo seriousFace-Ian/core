@@ -10,6 +10,7 @@
     "format": "prettier --write \"packages/**/*.{js,ts,jsx,tsx,json,css}\"",
     "type-check": "tsc --noEmit",
     "test": "vitest",
+    "build": "pnpm --filter @ianchoi/core run build",
     "prepare": "husky"
   },
   "keywords": [],
