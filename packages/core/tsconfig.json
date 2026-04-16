@@ -16,7 +16,6 @@
     "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "ignoreDeprecations": "6.0",
 
     /* output config */
     "rootDir": "./src"

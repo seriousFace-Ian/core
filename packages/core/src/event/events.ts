@@ -70,4 +70,13 @@ export default class EventsEmitter {
 
     return this
   }
+
+  removeAllListeners(): this {
+    for (const [eventName, callbacks] of this.events) {
+      for (const callback of callbacks) {
+        this.off(eventName, callback)
+      }
+    }
+    return this
+  }
 }

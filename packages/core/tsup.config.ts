@@ -7,8 +7,11 @@ export default defineConfig({
   // 输出格式配置
   format: ['esm', 'cjs'],
 
-  // 是否生成类型定义文件 (.d.ts)
-  dts: true,
+  dts: {
+    compilerOptions: {
+      ignoreDeprecations: '6.0',
+    },
+  },
 
   outDir: 'dist',
   splitting: true,
