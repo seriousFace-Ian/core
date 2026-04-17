@@ -115,3 +115,110 @@ export function omit<T extends object, K extends keyof T>(data: T, keys: K[]): O
 
   return result as Omit<T, K>
 }
+
+/**
+ * Safely set a nestd value on an object by path (mutates in place)
+ * Auto-creates intermediate nodes: numeric keys create arrays, others create objects.
+ *
+ * @example
+ * set({}, 'a.b.c', 1)           // → { a: { b: { c: 1 } } }
+ * set({}, 'a[0].b', true)       // → { a: [{ b: true }] }
+ * set({}, 'a[0][1]', 'x')       // → { a: [[undefined, 'x']] }
+ */
+export function safeSet<T extends object>(data: T, path: string, value: unknown): T {
+  const keys = parsePath(path)
+
+  if (keys.length === 0) return data
+
+  let current: Record<string, unknown> = data as unknown as Record<string, unknown>
+
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i]
+    const nextKey = key[i + 1]
+    const nextIsIndex = /^\d+$/.test(nextKey)
+
+    if (current[key] === null || typeof current[key] !== 'object') {
+      current[key] = nextIsIndex ? [] : {}
+    }
+
+    current = current[key] as Record<string, unknown>
+  }
+
+  current[keys[keys.length - 1]] = value
+
+  return data
+}
+
+/**
+ * Safely get a nested value from an object by path (returns undefined if not found).
+ *
+ * @example
+ * safeGet({ a: { b: { c: 1 } } }, 'a.b.c')  // → 1
+ */
+export function safeGet<T = unknown>(data: unknown, path: string, defaultValue?: T): T | undefined {
+  const keys = parsePath(path)
+  let current: unknown = data
+
+  for (const key of keys) {
+    if (current === null || typeof current !== 'object') return defaultValue
+
+    current = (current as Record<string, unknown>)[key]
+  }
+
+  return current === undefined ? defaultValue : (current as T)
+}
+
+/**
+ * Deep merge multiple objects into a single object.
+ *
+ * @example
+ * merge({ a: 1 }, { b: 2 }, { c: 3 })  // → { a: 1, b: 2, c: 3 }
+ */
+export function merge<T extends object>(...sources: Partial<T>[]): T {
+  const result = {} as Record<string, unknown>
+  for (const source of sources) {
+    if (!isPlainObject(source)) continue
+    for (const key of Object.keys(source)) {
+      if (UNSAFE_KEYS.has(key)) continue
+      const targetVal = result[key]
+      const sourceVal = (source as Record<string, unknown>)[key]
+      if (isPlainObject(targetVal) && isPlainObject(sourceVal)) {
+        result[key] = merge(targetVal, sourceVal)
+      } else {
+        result[key] = sourceVal
+      }
+    }
+  }
+  return result as T
+}
+
+/** ******* Utils *********/
+
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype'])
+
+/**
+ * Check if a value is a plain object (i.e., not a DOM element or other non-object types).
+ *
+ * @example
+ * isPlainObject({})          // → true
+ * isPlainObject(new Date())  // → false
+ * isPlainObject(new Error()) // → false
+ * isPlainObject(new Map())   // → false
+ * isPlainObject(new Set())   // → false
+ * isPlainObject(new Proxy({}, {})) // → false
+ */
+function isPlainObject(val: unknown): val is Record<string, unknown> {
+  if (val === null || typeof val !== 'object') return false
+  const proto = Object.getPrototypeOf(val)
+  return proto === Object.prototype || proto === null
+}
+
+/**
+ * Parse a path string into an array of string keys.
+ * Supports dot notation and bracket notation
+ *
+ * e.g. 'a.b[0].c' → ['a', 'b', '0', 'c']
+ */
+function parsePath(path: string): string[] {
+  return path.match(/[^.[\]]+/g) ?? []
+}
