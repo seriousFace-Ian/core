@@ -1,4 +1,14 @@
 /**
+ * Methods
+ *  - deepClone
+ *  - pick
+ *  - omit
+ *  - safeSet
+ *  - safeGet
+ *  - merge
+ */
+
+/**
  * Support types: Basic \ Reference \ Date \ RegExp \ Error \ Map \ Set \ Symbol
  * Keep original Prototype
  * Keep circle Reference
@@ -134,7 +144,7 @@ export function safeSet<T extends object>(data: T, path: string, value: unknown)
 
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i]
-    const nextKey = key[i + 1]
+    const nextKey = keys[i + 1]
     const nextIsIndex = /^\d+$/.test(nextKey)
 
     if (current[key] === null || typeof current[key] !== 'object') {
@@ -174,7 +184,7 @@ export function safeGet<T = unknown>(data: unknown, path: string, defaultValue?:
  * @example
  * merge({ a: 1 }, { b: 2 }, { c: 3 })  // → { a: 1, b: 2, c: 3 }
  */
-export function merge<T extends object>(...sources: Partial<T>[]): T {
+export function merge(...sources: object[]): Record<string, unknown> {
   const result = {} as Record<string, unknown>
   for (const source of sources) {
     if (!isPlainObject(source)) continue
@@ -189,7 +199,7 @@ export function merge<T extends object>(...sources: Partial<T>[]): T {
       }
     }
   }
-  return result as T
+  return result
 }
 
 /** ******* Utils *********/

@@ -1,44 +1,54 @@
-type ThrottleBehavior = {
-  leading?: boolean
-  trailing?: boolean
-}
-
-type ThrottleOptions = [fn: (...args: unknown[]) => void, wait: number, behavior?: ThrottleBehavior]
-
-export default function throttle(...args: ThrottleOptions) {
-  const [fn, wait, behavior = {}] = args
+export default function throttle<T extends unknown[]>(
+  fn: (...args: T) => unknown,
+  wait: number,
+  behavior: {leading?: boolean; trailing?: boolean} = {}
+) {
   const {leading = true, trailing = true} = behavior
 
   let timer: ReturnType<typeof setTimeout> | undefined
   let lastInvokeTime: number | undefined
+  let firstCallTime: number | undefined
   let lastThis: unknown
-  let lastArgs: unknown[] | undefined
+  let lastArgs: T | undefined
 
-  return function (this: unknown, ...args: unknown[]) {
+  return function (this: unknown, ...args: T) {
     const now = Date.now()
-    const sinceLastInvoke = lastInvokeTime === undefined ? Number.NaN : now - lastInvokeTime
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     lastThis = this
     lastArgs = args
 
-    const invokeFunc = (invokeThis: unknown, invokeArgs: unknown[]) => {
+    const invokeFunc = (invokeThis: unknown, invokeArgs: T) => {
       lastInvokeTime = Date.now()
+      firstCallTime = undefined
 
       fn.apply(invokeThis, invokeArgs)
     }
 
-    if (!lastInvokeTime && leading) {
+    if (lastInvokeTime === undefined && leading) {
       invokeFunc(this, args)
-    } else if (sinceLastInvoke >= wait) {
+      return
+    }
+
+    if (lastInvokeTime !== undefined && now - lastInvokeTime >= wait) {
       if (timer) clearTimeout(timer)
 
       invokeFunc(this, args)
-    } else if (!timer && trailing) {
-      timer = setTimeout(() => {
-        timer = undefined
-        invokeFunc(lastThis, lastArgs ?? [])
-      }, wait - sinceLastInvoke)
+      return
     }
+
+    if (!trailing || timer) return
+
+    if (firstCallTime === undefined) {
+      firstCallTime = now
+    }
+
+    const baseTime = lastInvokeTime ?? firstCallTime
+    const remaining = Math.max(wait - (now - baseTime), 0)
+
+    timer = setTimeout(() => {
+      timer = undefined
+      invokeFunc(lastThis, lastArgs ?? ([] as unknown as T))
+    }, remaining)
   }
 }

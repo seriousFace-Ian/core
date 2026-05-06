@@ -53,7 +53,7 @@ export default class EventsEmitter {
       this.events.delete(eventName)
     }
 
-    return true
+    return removed
   }
 
   once(eventName: string, callback: EventHandler): this {

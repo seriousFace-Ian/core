@@ -1,15 +1,15 @@
-type DebounceOptions = [fn: (...args: unknown[]) => void, wait: number, immediate?: boolean]
-
-export default function debounce(...args: DebounceOptions) {
-  const [fn, wait, immediate = false] = args
-
+export default function debounce<T extends unknown[]>(
+  fn: (...args: T) => unknown,
+  wait: number,
+  immediate = false
+) {
   if (Object.prototype.toString.call(fn) !== '[object Function]') {
     throw new Error('fn must be a function')
   }
 
   let timer: ReturnType<typeof setTimeout> | undefined
 
-  return function (this: unknown, ...args: unknown[]) {
+  return function (this: unknown, ...args: T) {
     const callNow = immediate && !timer
 
     clearTimeout(timer)

@@ -1,4 +1,4 @@
-export {default as EventsEmitter} from './event/events'
+export {default as EventsEmitter} from './event'
 export {default as debounce} from './function/debounce'
 export {default as throttle} from './function/throttle'
 export {
@@ -12,4 +12,4 @@ export {
   isSymbol,
   isUndefined,
   parseType,
-} from './is/is'
+} from './is'
