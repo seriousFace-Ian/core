@@ -1,10 +1,23 @@
+# dependencies
 /node_modules
-/dist
-
 /**/node_modules
+
+# build output
+/dist
 /**/dist
 
-.env
+# typescript
+**/*.tsbuildinfo
 
+# env
+.env
+.env.*
+
+# test
+coverage
+
+# os
+.DS_Store
+
+# internal
 plan.md
-tsconfig.tsbuildinfo

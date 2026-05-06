@@ -13,3 +13,8 @@ export {
   isUndefined,
   parseType,
 } from './is'
+export {clamp, formatNumber, random, round} from './math'
+export {deepClone, merge, omit, pick, safeGet, safeSet} from './object'
+export {getStorageItem, removeStorageItem, setStorageItem} from './storage'
+export {camelCase, kebabCase, pascalCase} from './string'
+export {default as url} from './string/url'
